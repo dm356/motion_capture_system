@@ -124,7 +124,7 @@ void QualisysDriver::handleFrame() {
     if (model_set.empty() || model_set.count(subject_name)) {
       // Create a new subject if it does not exist
       if (subjects.find(subject_name) == subjects.end()) {
-        subjects[subject_name] = Subject::SubjectPtr(
+        subjects[subject_name] = Subject::Ptr(
             new Subject(&nh, subject_name, fixed_frame_id));
         subjects[subject_name]->setParameters(
             process_noise, measurement_noise, frame_rate);

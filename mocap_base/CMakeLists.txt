@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(mocap_base)
 
+set( CMAKE_EXPORT_COMPILE_COMMANDS 1 )
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 find_package(Boost REQUIRED)
@@ -26,7 +28,7 @@ include_directories(
   ${EIGEN3_INCLUDE_DIR}
 )
 
-add_definitions("-std=c++0x -Wall")
+add_definitions("-std=c++11 -Wall")
 
 add_library(mocap_kalman_filter
   src/KalmanFilter.cpp
@@ -40,7 +42,8 @@ add_dependencies(mocap_kalman_filter
 )
 
 add_library(mocap_base_driver
-  src/MoCapDriverBase.cpp
+  src/Subject.cpp
+  src/BatchHandler.cpp
 )
 target_link_libraries(mocap_base_driver
   ${catkin_LIBRARIES}

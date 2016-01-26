@@ -17,8 +17,6 @@
 #ifndef MOCAP_DRIVER_BASE_H
 #define MOCAP_DRIVER_BASE_H
 
-
-#include <map>
 #include <string>
 #include <vector>
 #include <boost/thread.hpp>
@@ -27,106 +25,16 @@
 #include <Eigen/Geometry>
 #include <ros/ros.h>
 #include <tf/transform_broadcaster.h>
-#include <mocap_base/KalmanFilter.h>
+#include <mocap_base/BatchHandler.h>
+#include <mocap_base/Subject.h>
 
 namespace mocap{
-
-/*
- * @brief Subject Defines attributes of a rigid body
- */
-class Subject {
-  public:
-
-    enum Status {
-      LOST,
-      INITIALIZING,
-      TRACKED
-    };
-
-    /*
-     * @brief Constructor and Destructor
-     */
-    Subject(ros::NodeHandle* nptr, const std::string& sub_name,
-        const std::string& p_frame);
-    ~Subject() {}
-
-    /*
-     * @brief getName setName
-     *    Get and set the name of the object
-     */
-    const std::string& getName();
-    void setName(const std::string& sub_name);
-    /*
-     * @brief isActive Tells if the object is still active or not
-     */
-    const Status& getStatus();
-    void enable();
-    void disable();
-    /*
-     * @brief getAttitude getPosition getAngularVel getLinearVel
-     *    Returns the state of the object
-     */
-    const Eigen::Quaterniond& getAttitude();
-    const Eigen::Vector3d& getPosition();
-    const Eigen::Vector3d& getAngularVel();
-    const Eigen::Vector3d& getLinearVel();
-
-    /*
-     * @brief setNoiseParameter Set noise parameters for
-     *    the kalman filter
-     * @param u_cov Input noise
-     * @param m_cov Measurement noise
-     * @return True if success
-     */
-    bool setParameters(
-        const Eigen::Matrix<double, 12, 12>& u_cov,
-        const Eigen::Matrix<double, 6, 6>& m_cov,
-        const int& freq);
-
-    /*
-     * @brief processNewMeasurement Process new measurements
-     *    from the mocap system
-     * @param m_attitude Measured attitude
-     * @param m_position Measured position
-     */
-    void processNewMeasurement(
-        const double& time,
-        const Eigen::Quaterniond& m_attitude,
-        const Eigen::Vector3d& m_position);
-
-
-    typedef boost::shared_ptr<Subject> SubjectPtr;
-    typedef const boost::shared_ptr<Subject> SubjectConstPtr;
-
-  private:
-    // Disable copy constructor and assign operator
-    Subject(const Subject&);
-    Subject& operator=(const Subject&);
-
-    // Name of the subject
-    std::string name;
-
-    // Error state Kalman filter
-    KalmanFilter kFilter;
-
-    // Tells the status of the object
-    Status status;
-
-    // Prevent cocurrent reading and writing of the class
-    boost::shared_mutex mtx;
-
-    // Publisher for the subject
-    ros::NodeHandle* nh_ptr;
-    std::string parent_frame;
-    ros::Publisher pub_filter;
-};
-
-/*
- * @brief: MoCapDriverBase Base class for the drivers
- *    of different motion capture system (e.g. vicon
- *    and qualisys)
- */
-class MoCapDriverBase{
+  /*
+   * @brief: MoCapDriverBase Base class for the drivers
+   *    of different motion capture system (e.g. vicon
+   *    and qualisys)
+   */
+  class MoCapDriverBase{
 
   public:
     /*
@@ -139,8 +47,8 @@ class MoCapDriverBase{
       model_list     (std::vector<std::string>(0)),
       publish_tf     (false),
       fixed_frame_id ("mocap"){
-      return;
-    }
+        return;
+      }
 
     /*
      * @brief Destructor
@@ -200,14 +108,17 @@ class MoCapDriverBase{
     std::vector<std::string> model_list;
 
     // Observed rigid bodies (contains those lose tracking)
-    std::map<std::string, Subject::SubjectPtr> subjects;
+    Subject::Map subjects;
+
+    // Map of batched subjects (models of similar configuration)
+    BatchHandler::Vec batches;
 
     // Publish tf
     bool publish_tf;
     std::string fixed_frame_id;
     tf::TransformBroadcaster tf_publisher;
 
-};
+  };
 }
 
 

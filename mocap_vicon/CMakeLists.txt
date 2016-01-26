@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(mocap_vicon)
 
+set( CMAKE_EXPORT_COMPILE_COMMANDS 1 )
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 find_package(Boost REQUIRED)
@@ -77,7 +79,7 @@ include_directories(
   ${EIGEN3_INCLUDE_DIR}
 )
 
-add_definitions("-std=c++0x -Wall")
+add_definitions("-std=c++11 -Wall")
 
 
 add_library(mocap_vicon_driver
