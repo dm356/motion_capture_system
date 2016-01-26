@@ -74,6 +74,9 @@ class Subject {
     const Eigen::Vector3d& getAngularVel();
     const Eigen::Vector3d& getLinearVel();
 
+    void getPredictedAttitude(const double& time, Eigen::Quaterniond& attitude);
+    void getPredictedPosition(const double& time, Eigen::Vector3d& position);
+
     /*
      * @brief setNoiseParameter Set noise parameters for
      *    the kalman filter

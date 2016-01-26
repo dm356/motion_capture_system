@@ -288,13 +288,13 @@ namespace mocap {
     size_t N_m = measurements.size(), N_s = subjects.size();
     // N_m should be greater than N_s, as per addMeasurement (which adds objects if measurements is greater)
     Eigen::MatrixXd m(N_s,N_s);
-    Eigen::Vector3d diff;
+    Eigen::Vector3d pos;
     m.fill(0);
     double max_val = 0;
     for(size_t i=0;i<N_s;i++){
       for(size_t j=0;j<N_m;j++){
-        diff = subjects[i]->getPosition() - measurements[j]->position;
-        m(i,j) = diff.squaredNorm();
+        subjects[i]->getPredictedPosition(measurements[j]->time,pos);
+        m(i,j) = (pos - measurements[j]->position).squaredNorm();
         if(m(i,j) > max_val)
           max_val = m(i,j);
       }

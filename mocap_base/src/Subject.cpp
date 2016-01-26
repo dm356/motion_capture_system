@@ -78,6 +78,17 @@ namespace mocap {
     return kFilter.linear_vel;
   }
 
+  void Subject::getPredictedAttitude(const double& time, Eigen::Quaterniond& attitude)
+  {
+    boost::shared_lock<boost::shared_mutex> read_lock(mtx);
+    kFilter.estimateAttitude(time,attitude);
+  }
+  void Subject::getPredictedPosition(const double& time, Eigen::Vector3d& position)
+  {
+    boost::shared_lock<boost::shared_mutex> read_lock(mtx);
+    kFilter.estimatePosition(time,position);
+  }
+
   // Set the noise parameter for the kalman filter
   bool Subject::setParameters(
                               const Eigen::Matrix<double, 12, 12>& u_cov,

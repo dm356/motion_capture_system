@@ -101,6 +101,22 @@ class KalmanFilter {
      */
     void reset();
 
+    /**
+     * @brief estimate Gets position prediction given current state.
+     *
+     * @param curr_time_stamp Time at predicted state
+     * @param p_position Predicted position
+     */
+    void estimatePosition(const double& curr_time_stamp, Eigen::Vector3d& p_position) const;
+
+    /**
+     * @brief estimate Gets attitude prediction given current state.
+     *
+     * @param curr_time_stamp Time at predicted state
+     * @param p_attitude Predicted attitude
+     */
+    void estimateAttitude(const double& curr_time_stamp, Eigen::Quaterniond& p_attitude) const;
+
     /*
      * @brief prediction Performs the predictions step
      *    of the Kalman filter
