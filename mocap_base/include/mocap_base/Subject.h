@@ -104,7 +104,7 @@ class Subject {
         const Eigen::Quaterniond& m_attitude,
         const Eigen::Vector3d& m_position);
 
-
+    bool publish_raw;
 
   private:
     // Disable copy constructor and assign operator
@@ -129,6 +129,7 @@ class Subject {
     ros::NodeHandle* nh_ptr;
     std::string parent_frame;
     ros::Publisher pub_filter;
+    ros::Publisher raw_pub;
 };
 }
 

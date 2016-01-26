@@ -33,7 +33,7 @@ namespace mocap {
     nh.param("model_list", model_list, std::vector<std::string>(0));
     nh.param("batch_list", batch_list, std::vector<std::string>(0));
     nh.param("fixed_batch_list", fixed_batch_list, std::vector<std::string>(0));
-    nh.param("batch_timeout", timeout, 10.0);
+    nh.param("batch_timeout", timeout, 1.0);
     nh.param("frame_rate", frame_rate, 100);
     nh.param("max_accel", max_accel, 20.0);
     nh.param("publish_tf", publish_tf, false);
@@ -161,7 +161,7 @@ namespace mocap {
       {
         if(subject_name.find((*it)->getName()) != std::string::npos){
           (*it)->addMeasurement(time,m_att,m_pos);
-          in_batch = true;
+          //in_batch = true;
           break;
         }
       }

@@ -22,6 +22,7 @@ namespace mocap {
 
   Subject::Subject(ros::NodeHandle* nptr, const std::string& sub_name,
                    const std::string& p_frame):
+    publish_raw  (false),
     name         (sub_name),
     status       (LOST),
     nh_ptr       (nptr),
@@ -29,6 +30,8 @@ namespace mocap {
   {
     last_measurement_time = ros::Time::now().toSec();
     pub_filter = nh_ptr->advertise<nav_msgs::Odometry>(name+"/odom", 10);
+    if(publish_raw)
+      raw_pub = nh_ptr->advertise<nav_msgs::Odometry>(name+"/raw_odom", 10);
     return;
   }
 
@@ -113,9 +116,20 @@ namespace mocap {
 
     // Publish the new state
     nav_msgs::Odometry odom_filter;
+
     odom_filter.header.stamp = ros::Time(time);
     odom_filter.header.frame_id = parent_frame;
     odom_filter.child_frame_id = name;
+
+    if(publish_raw){
+      tf::quaternionEigenToMsg(m_attitude, odom_filter.pose.pose.orientation);
+      tf::pointEigenToMsg(kFilter.position, odom_filter.pose.pose.position);
+      tf::vectorEigenToMsg(kFilter.angular_vel, odom_filter.twist.twist.angular);
+      tf::vectorEigenToMsg(kFilter.linear_vel, odom_filter.twist.twist.linear);
+
+      raw_pub.publish(odom_filter);
+    }
+
     tf::quaternionEigenToMsg(kFilter.attitude, odom_filter.pose.pose.orientation);
     tf::pointEigenToMsg(kFilter.position, odom_filter.pose.pose.position);
     tf::vectorEigenToMsg(kFilter.angular_vel, odom_filter.twist.twist.angular);
