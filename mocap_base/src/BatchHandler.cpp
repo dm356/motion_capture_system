@@ -246,6 +246,40 @@ namespace mocap {
     name = sub_name;
   }
 
+  // Get number of active objects
+  int BatchHandler::getNumSubjects()
+  {
+    boost::shared_lock<boost::shared_mutex> read_lock(mtx);
+    return subjects.size();
+  }
+
+  // Get object state for given index
+  const Eigen::Quaterniond& BatchHandler::getAttitude(const int& idx)
+  {
+    boost::shared_lock<boost::shared_mutex> read_lock(mtx);
+    return subjects[idx]->getAttitude();
+  }
+  const Eigen::Vector3d& BatchHandler::getPosition(const int& idx)
+  {
+    boost::shared_lock<boost::shared_mutex> read_lock(mtx);
+    return subjects[idx]->getPosition();
+  }
+  const Eigen::Vector3d& BatchHandler::getAngularVel(const int& idx)
+  {
+    boost::shared_lock<boost::shared_mutex> read_lock(mtx);
+    return subjects[idx]->getAngularVel();
+  }
+  const Eigen::Vector3d& BatchHandler::getLinearVel(const int& idx)
+  {
+    boost::shared_lock<boost::shared_mutex> read_lock(mtx);
+    return subjects[idx]->getLinearVel();
+  }
+  const std::string& BatchHandler::getSubjectName(const int& idx)
+  {
+    boost::shared_lock<boost::shared_mutex> read_lock(mtx);
+    return subjects[idx]->getName();
+  }
+
   // Set the noise parameter for the kalman filter
   bool BatchHandler::setParameters(const Eigen::Matrix<double, 12, 12>& u_cov,
                                    const Eigen::Matrix<double, 6, 6>& m_cov,

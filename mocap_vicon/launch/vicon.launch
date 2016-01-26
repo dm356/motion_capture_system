@@ -11,6 +11,6 @@
     <param name="batch_timeout" value="1"/>
     <!--<rosparam param="model_list">[danaus08]</rosparam>-->
     <rosparam param="batch_list">[danaus]</rosparam>
-    <remap from="/vicon/miniquad1/odom" to="/miniquad1/odom"/>
+    <!--<remap from="/vicon/miniquad1/odom" to="/miniquad1/odom"/>-->
   </node>
 </launch>

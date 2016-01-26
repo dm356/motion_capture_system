@@ -244,7 +244,6 @@ namespace mocap {
     subjects[subject_name]->processNewMeasurement(time, m_att, m_pos);
     //read_lock.unlock();
 
-
     // Publish tf if requred
     if (publish_tf &&
         subjects[subject_name]->getStatus() == Subject::TRACKED) {
@@ -269,6 +268,31 @@ namespace mocap {
 
   void ViconDriver::handleBatch(const int& sub_idx)
   {
+    boost::unique_lock<boost::shared_mutex> write_lock(mtx);
+    write_lock.unlock();
+
     batches[sub_idx]->processMeasurements();
+
+    // Publish tf if requred
+    if (publish_tf) {
+      Eigen::Quaterniond att;
+      Eigen::Vector3d pos;
+      tf::Quaternion att_tf;
+      tf::Vector3 pos_tf;
+      tf::StampedTransform stamped_transform;
+      int N = batches[sub_idx]->getNumSubjects();
+      for(int i=0;i<N;i++){
+        att = batches[sub_idx]->getAttitude(i);
+        pos = batches[sub_idx]->getPosition(i);
+        tf::quaternionEigenToTF(att, att_tf);
+        tf::vectorEigenToTF(pos, pos_tf);
+
+        stamped_transform = tf::StampedTransform(tf::Transform(att_tf, pos_tf),
+                             ros::Time::now(), fixed_frame_id, batches[sub_idx]->getSubjectName(i));
+        write_lock.lock();
+        tf_publisher.sendTransform(stamped_transform);
+        write_lock.unlock();
+      }
+    }
   }
 }

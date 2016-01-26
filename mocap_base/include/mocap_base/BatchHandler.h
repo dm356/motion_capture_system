@@ -56,6 +56,26 @@ namespace mocap{
     const std::string& getName();
     void setName(const std::string& sub_name);
 
+
+    /**
+     * @brief getNumSubjects Get the number of actively tracked objects
+     *
+     * @return Number of subjects
+     */
+    int getNumSubjects();
+
+    /*
+     * @brief getAttitude getPosition getAngularVel getLinearVel
+     *    Returns the state of object at given index.  Warning: there is no size check.
+     *    Use in conjunction with getNumSubjects.
+     */
+    const Eigen::Quaterniond& getAttitude(const int& idx);
+    const Eigen::Vector3d& getPosition(const int& idx);
+    const Eigen::Vector3d& getAngularVel(const int& idx);
+    const Eigen::Vector3d& getLinearVel(const int& idx);
+    const std::string& getSubjectName(const int& idx);
+
+
     /*
      * @brief setParameters Set noise parameters for
      *    the kalman filter
