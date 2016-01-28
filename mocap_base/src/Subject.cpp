@@ -130,7 +130,7 @@ namespace mocap {
 
     odom_filter.header.stamp = ros::Time(time);
     odom_filter.header.frame_id = parent_frame;
-    odom_filter.child_frame_id = name;
+    odom_filter.child_frame_id = name + "/base";
 
     if(publish_raw){
       tf::quaternionEigenToMsg(m_attitude, odom_filter.pose.pose.orientation);

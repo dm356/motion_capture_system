@@ -257,7 +257,7 @@ namespace mocap {
 
       tf::StampedTransform stamped_transform =
       tf::StampedTransform(tf::Transform(att_tf, pos_tf),
-                           ros::Time::now(), fixed_frame_id, subject_name);
+                           ros::Time::now(), fixed_frame_id, subject_name + "/base");
       write_lock.lock();
       tf_publisher.sendTransform(stamped_transform);
       write_lock.unlock();
@@ -288,7 +288,7 @@ namespace mocap {
         tf::vectorEigenToTF(pos, pos_tf);
 
         stamped_transform = tf::StampedTransform(tf::Transform(att_tf, pos_tf),
-                             ros::Time::now(), fixed_frame_id, batches[sub_idx]->getSubjectName(i));
+                             ros::Time::now(), fixed_frame_id, batches[sub_idx]->getSubjectName(i)+"/base");
         write_lock.lock();
         tf_publisher.sendTransform(stamped_transform);
         write_lock.unlock();
